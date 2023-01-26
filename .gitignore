@@ -1,0 +1,8 @@
+
+*.syso
+*.txt
+*.exe
+*.zip
+
+/cmd/v1/winres
+/cmd/v1/image_downloader
