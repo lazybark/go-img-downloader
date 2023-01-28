@@ -13,9 +13,9 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/lazybark/go-helpers/cli/clf"
 	"github.com/lazybark/go-img-downloader/config"
-	"github.com/lazybark/go-img-downloader/pkg/getters"
-	"github.com/lazybark/go-img-downloader/pkg/imgworks"
-	"github.com/lazybark/go-img-downloader/pkg/parsers"
+	"github.com/lazybark/go-img-downloader/pkg/getter"
+	"github.com/lazybark/go-img-downloader/pkg/imgwork"
+	"github.com/lazybark/go-img-downloader/pkg/parser"
 	"github.com/pterm/pterm"
 )
 
@@ -31,9 +31,9 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 	var text string
 	var err error
 	if cfg.ForceChrome {
-		text, err = getters.GetPageHTMLByChromeDP(path, cfg.Debug)
+		text, err = getter.GetPageHTMLByChromeDP(path, cfg.Debug)
 	} else {
-		text, err = getters.GetPageHTML(path, cfg.Debug)
+		text, err = getter.GetPageHTML(path, cfg.Debug)
 	}
 	if err != nil {
 		return err
@@ -41,17 +41,17 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 
 	//Parse code & find all images
 	spinnerLiveText.UpdateText("Parsing code")
-	links = parsers.ParseHTMLForImgs(text)
+	links = parser.ParseHTMLForImgs(text)
 	l := len(links)
 
 	//Retry using ChromeDP if there are no images (this case often happens with SPAs like React -
 	//we need to use JS)
 	if l == 0 {
-		text, err = getters.GetPageHTMLByChromeDP(path, cfg.Debug)
+		text, err = getter.GetPageHTMLByChromeDP(path, cfg.Debug)
 		if err != nil {
 			return err
 		}
-		links = parsers.ParseHTMLForImgs(text)
+		links = parser.ParseHTMLForImgs(text)
 		l = len(links)
 	}
 	if l == 0 {
@@ -83,7 +83,7 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 		imgName := filepath.Base(u.String())
 		imgPath := filepath.Join(downloadInto, fmt.Sprint(n)+"_"+imgName)
 
-		decoded, format, err := imgworks.DecodeImage(imageBytes)
+		decoded, format, err := imgwork.DecodeImage(imageBytes)
 		if err != nil {
 			pterm.Error.Println(fmt.Sprintf("[ERROR DECODING] %s: %s", u.String(), err))
 			continue
@@ -109,14 +109,14 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 		//Resize if needed
 		if cfg.MaxImgHeight > 0 && cfg.MaxImgWidth > 0 && size.X > cfg.MaxImgWidth && size.Y > cfg.MaxImgHeight {
 			if size.Y > size.X {
-				decoded = imgworks.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
+				decoded = imgwork.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
 			} else {
-				decoded = imgworks.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
+				decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
 			}
 		} else if cfg.MaxImgWidth > 0 && size.X > cfg.MaxImgWidth {
-			decoded = imgworks.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
+			decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
 		} else if cfg.MaxImgHeight > 0 && size.Y > cfg.MaxImgHeight {
-			decoded = imgworks.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
+			decoded = imgwork.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
 		}
 
 		//Save ending image
@@ -134,13 +134,13 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 		var newName string
 		var newPath string
 		if cfg.ConvertAllToJPG && format != "jpeg" {
-			decoded, err = imgworks.ConvertToJPG(decoded, imgworks.ImgWriter{}, format)
+			decoded, err = imgwork.ConvertToJPG(decoded, imgwork.ImgWriter{}, format)
 			converted = true
 			newName = imgName + ".jpg"
 			newPath = imgPath + ".jpg"
 		}
 		if cfg.ConvertAllToPNG && format != "png" {
-			decoded, err = imgworks.ConvertToPNG(decoded, imgworks.ImgWriter{})
+			decoded, err = imgwork.ConvertToPNG(decoded, imgwork.ImgWriter{})
 			converted = true
 			newName = imgName + ".png"
 			newPath = imgPath + ".png"

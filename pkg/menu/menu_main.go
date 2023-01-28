@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/lazybark/go-img-downloader/config"
-	"github.com/lazybark/go-img-downloader/pkg/actions/urldownload"
+	"github.com/lazybark/go-img-downloader/pkg/action/urldownload"
 	"github.com/lazybark/go-img-downloader/pkg/clif"
 )
 
