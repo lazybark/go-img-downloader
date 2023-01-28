@@ -8,8 +8,8 @@ import (
 	"github.com/lazybark/go-helpers/cli/clf"
 	"github.com/lazybark/go-img-downloader/config"
 	"github.com/lazybark/go-img-downloader/pkg/clif"
-	"github.com/lazybark/go-img-downloader/pkg/getters"
-	"github.com/lazybark/go-img-downloader/pkg/parsers"
+	"github.com/lazybark/go-img-downloader/pkg/getter"
+	"github.com/lazybark/go-img-downloader/pkg/parser"
 )
 
 var (
@@ -42,7 +42,7 @@ func GetAllImgsRecursively(cfg config.Config) error {
 		downloadedList = map[string]bool{}
 
 		menuActionsRecusive.Promt()
-		userCommand, userLink := menuActionsRecusive.AwaitInput(parsers.ParseURL)
+		userCommand, userLink := menuActionsRecusive.AwaitInput(parser.ParseURL)
 		if userCommand.Key == menuActionsRecusive.ExitKey {
 			fmt.Println("Exiting")
 			os.Exit(0)
@@ -66,21 +66,21 @@ func GetAllImgsRecursively(cfg config.Config) error {
 			ignoreExternal = true
 		}
 
-		pageText, err := getters.GetPageHTML(u, cfg.Debug)
+		pageText, err := getter.GetPageHTML(u, cfg.Debug)
 		if err != nil {
 			fmt.Println(clf.Red(err))
 			continue
 		}
 
-		links := parsers.ParseHTMLForLinks(pageText)
+		links := parser.ParseHTMLForLinks(pageText)
 		l := len(links)
 
 		if l == 0 {
-			pageText, err = getters.GetPageHTMLByChromeDP(u, cfg.Debug)
+			pageText, err = getter.GetPageHTMLByChromeDP(u, cfg.Debug)
 			if err != nil {
 				fmt.Println(clf.Red(err))
 			}
-			links = parsers.ParseHTMLForLinks(pageText)
+			links = parser.ParseHTMLForLinks(pageText)
 			l = len(links)
 		}
 		if l == 0 {

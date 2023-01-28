@@ -1,4 +1,4 @@
-package getters
+package getter
 
 import (
 	"context"

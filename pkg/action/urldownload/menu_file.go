@@ -9,7 +9,7 @@ import (
 	"github.com/lazybark/go-helpers/cli/clf"
 	"github.com/lazybark/go-img-downloader/config"
 	"github.com/lazybark/go-img-downloader/pkg/clif"
-	"github.com/lazybark/go-img-downloader/pkg/parsers"
+	"github.com/lazybark/go-img-downloader/pkg/parser"
 )
 
 var (
@@ -28,7 +28,7 @@ func GetAllImgsFile(cfg config.Config) error {
 	var linksList []string
 	for {
 		menuActionsFile.Promt()
-		userCommand, pathToFile := menuActionsFile.AwaitInput(parsers.ParseURL)
+		userCommand, pathToFile := menuActionsFile.AwaitInput(parser.ParseURL)
 		if userCommand.Key == menuActionsFile.ExitKey {
 			fmt.Println("Exiting")
 			os.Exit(0)

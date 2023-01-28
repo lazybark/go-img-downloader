@@ -1,4 +1,4 @@
-package imgworks
+package imgwork
 
 import (
 	"bytes"
