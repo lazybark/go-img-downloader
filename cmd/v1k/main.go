@@ -18,7 +18,7 @@ func main() {
 	cfg.ConvertAllToJPG = true
 	cfg.ForceChrome = true
 	cfg.MinImgHeight = 251
-	cfg.MaxImgWidth = 251
+	cfg.MinImgWidth = 251
 	cfg.MaxImgHeight = 1200
 	cfg.MaxImgWidth = 1200
 

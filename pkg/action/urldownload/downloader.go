@@ -109,14 +109,14 @@ func DownloadImagesOnPage(path *url.URL, downloadInto string, cfg config.Config)
 		//Resize if needed
 		if cfg.MaxImgHeight > 0 && cfg.MaxImgWidth > 0 && size.X > cfg.MaxImgWidth && size.Y > cfg.MaxImgHeight {
 			if size.Y > size.X {
-				decoded = imgwork.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
+				decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgHeight, imaging.Lanczos)
 			} else {
-				decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
+				decoded = imgwork.ResizeImage(decoded, cfg.MaxImgWidth, 0, imaging.Lanczos)
 			}
 		} else if cfg.MaxImgWidth > 0 && size.X > cfg.MaxImgWidth {
-			decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgWidth, imaging.Lanczos)
+			decoded = imgwork.ResizeImage(decoded, cfg.MaxImgWidth, 0, imaging.Lanczos)
 		} else if cfg.MaxImgHeight > 0 && size.Y > cfg.MaxImgHeight {
-			decoded = imgwork.ResizeImage(decoded, cfg.MaxImgHeight, 0, imaging.Lanczos)
+			decoded = imgwork.ResizeImage(decoded, 0, cfg.MaxImgHeight, imaging.Lanczos)
 		}
 
 		//Save ending image
